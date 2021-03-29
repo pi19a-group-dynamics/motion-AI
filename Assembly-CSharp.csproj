@@ -64,6 +64,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ICreature.cs" />
+    <Compile Include="Assets\Scripts\NeuroNet.cs" />
+    <Compile Include="Assets\Scripts\Spider.cs" />
     <Compile Include="Assets\Scripts\Trainee.cs" />
     <Compile Include="Assets\Scripts\Worm.cs" />
     <Reference Include="UnityEngine">

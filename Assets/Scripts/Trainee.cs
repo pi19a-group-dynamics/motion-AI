@@ -1,16 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class Trainee : MonoBehaviour
+public class Trainee: MonoBehaviour
 {
-    public GameObject worm;
-    public List<GameObject> worms;
+    public GameObject creature;
+    public GameObject plane;
+    public GameObject pullPlane;
+    public System.Type type;
+    public List<List<GameObject>> branches = new List<List<GameObject>>();
+    List<GameObject> pullWorm = new List<GameObject>();
+    List<List<float>> averageData = new List<List<float>>();
+    List<List<float>> maxData = new List<List<float>>();
+    public int countBranch;
+    public int countBest;
+    public float distansBetweenCreature = 20f;
+    public float mutationPower;
+    public float mutationProb;
+    private int countSpecimen;
+    public int countHidenLayer;
+    private int numGen;
     // Start is called before the first frame update
     void Start()
     {
-        Spawn(200);
-        InvokeRepeating("Respawn", 10, 10);
+        numGen = 0;
+        NeuroNet.mutationPower = mutationPower;
+        NeuroNet.mutationProb = mutationProb;
+        using (StreamWriter streamBr = new StreamWriter("branch.txt", false, System.Text.Encoding.Default))
+        {
+            streamBr.Write(countBranch);
+        }
+        using (StreamWriter streamAv = new StreamWriter("averageData.txt", false, System.Text.Encoding.Default)) 
+        { 
+        }
+        using (StreamWriter streamMax = new StreamWriter("maxData.txt", false, System.Text.Encoding.Default)) 
+        { 
+        }
+        countSpecimen = countBest * countBest;
+        for (int i = 0; i < countBranch; i++)
+        {
+            averageData.Add(new List<float>());
+            maxData.Add(new List<float>());
+            GameObject CurrPlane = Instantiate(plane, new Vector3(300*i, 0, 0), new Quaternion(0, 0, 0, 0));
+            CurrPlane.transform.localScale = new Vector3(200f, 1f, countSpecimen*distansBetweenCreature + distansBetweenCreature);
+            SpawnBranch(CurrPlane);
+        }
+        GameObject pullBranch = Instantiate(pullPlane, new Vector3(300 * countBranch, 0, 0), new Quaternion(0, 0, 0, 0));
+        pullBranch.transform.localScale = new Vector3(200f, 1f, countSpecimen * distansBetweenCreature + distansBetweenCreature);
+        SpawnPullBranch(pullBranch);
+        InvokeRepeating("Respawn", 20, 20);
     }
 
     // Update is called once per frame
@@ -19,57 +57,89 @@ public class Trainee : MonoBehaviour
         
     }
 
-    public void Spawn(int countWorm)
+    public void SpawnBranch(GameObject plane)
     {
-        for (int i = 0; i < countWorm; i++)
+        List<GameObject> creatures = new List<GameObject>(); 
+        for (int i = 0; i < countSpecimen; i++)
         {
-            GameObject thisWorm = Instantiate(worm, new Vector3(0, 0, i*5), new Quaternion(0, 0, 0, 0));
-            worms.Add(thisWorm);
+            GameObject thisCreature = Instantiate(creature, new Vector3(plane.transform.position.x, 5, -countSpecimen * distansBetweenCreature/2 + i* distansBetweenCreature), new Quaternion(0, 0, 0, 0));
+            creatures.Add(thisCreature);
+        }
+        branches.Add(creatures);
+    }
+
+    public void SpawnPullBranch(GameObject plane)
+    {
+        for (int i = 0; i < countSpecimen; i++)
+        {
+            GameObject thisCreature = Instantiate(creature, new Vector3(plane.transform.position.x, 5, -countSpecimen * distansBetweenCreature / 2 + i * distansBetweenCreature), new Quaternion(0, 0, 0, 0));
+            pullWorm.Add(thisCreature);
         }
     }
 
     public void Respawn()
     {
-        float averange = 0;
-        List<float> scores = new List<float>();
-        List<Worm> spawnersSorted = new List<Worm>();
-        for (int i = 0; i < worms.Count; i++)
+        numGen++;
+        for (int indexBranch = 0; indexBranch < branches.Count; indexBranch++)
         {
-            Worm thisWorm = worms[i].GetComponent<Worm>();
-            float score = thisWorm.Score();
-            averange += score;
-            scores.Add(score);
-            spawnersSorted.Add(thisWorm);
-            
-        }
-        spawnersSorted.Sort((spawnerFirst, spawnerSecond) => spawnerFirst.Score().CompareTo(spawnerSecond.Score()));
-        scores.Sort();
-        averange /= worms.Count;
-        Debug.Log("Среднее " + -averange);
-        Debug.Log("Максимум " + -scores[0]);
-        for (int i = 0; i < 10; i++)
-        {
-            for (int j = 0; j < 10; j++)
+            float average = 0;
+            List<(NeuroNet, float)> spawnersSorted = new List<(NeuroNet, float)>();
+            for (int i = 0; i < branches[indexBranch].Count; i++)
             {
-                Worm newWorm = worms[i*10+j].GetComponent<Worm>();
-                newWorm.Respawn();
-                if (i!=j)
+
+                ICreature thisCreature = branches[indexBranch][i].GetComponent<ICreature>();
+                float score = thisCreature.Score();
+                spawnersSorted.Add((new NeuroNet(thisCreature.net),score));
+            }
+            for (int i = 0; i < pullWorm.Count; i++)
+            {
+                ICreature thisCreature = pullWorm[i].GetComponent<ICreature>();
+                float score = thisCreature.Score();
+                spawnersSorted.Add((new NeuroNet(thisCreature.net), score));
+            }
+            spawnersSorted.Sort((spawnerFirst, spawnerSecond) => spawnerFirst.Item2.CompareTo(spawnerSecond.Item2));
+            spawnersSorted.Reverse();
+            for (int i = 0; i < countBest; i++)
+            {
+                average += spawnersSorted[i].Item2;
+            }
+            average /= countBest;
+            averageData[indexBranch].Add(average);
+            maxData[indexBranch].Add(spawnersSorted[0].Item2);
+            using (StreamWriter streamAv = new StreamWriter("averageData.txt", true, System.Text.Encoding.Default))
+            {
+                streamAv.Write(" " + average);
+            }
+            using (StreamWriter streamMax = new StreamWriter("maxData.txt", true, System.Text.Encoding.Default))
+            {
+                streamMax.Write(" " + spawnersSorted[0].Item2);
+            }
+            Debug.Log("Поколение " + numGen);
+            for (int i = 0; i < countBest; i++)
+            {
+                for (int j = 0; j < countBest; j++)
                 {
-                    NeuroNet wormA = spawnersSorted[i].net;
-                    NeuroNet wormB = spawnersSorted[j].net;
-                    newWorm.net = new NeuroNet(wormA, wormB);
+                    ICreature newCreature = branches[indexBranch][i * countBest + j].GetComponent<ICreature>();
+                    NeuroNet wormA = spawnersSorted[i].Item1;
+                    NeuroNet wormB = spawnersSorted[j].Item1;
+                    newCreature.net = new NeuroNet(wormA, wormB);
+                    branches[indexBranch][i * countBest + j] = newCreature.Respawn();                  
                 }
-                else
-                {
-                    newWorm.net = spawnersSorted[i].net;
-                }              
-            }           
+            }
         }
-        for (int i = 100; i < 200; i++)
+        for (int i = 0; i < pullWorm.Count; i++)
         {
-            Worm newWorm = worms[i].GetComponent<Worm>();
-            newWorm.net = new NeuroNet(newWorm.bits.Count, newWorm.bits.Count - 1, 2, newWorm.bits.Count);
-            newWorm.Respawn();
+            ICreature thisCreature = pullWorm[i].GetComponent<ICreature>();
+            pullWorm[i] = thisCreature.Respawn();
+            thisCreature.CreateNeuro();
+        }
+        using (StreamWriter streamAv = new StreamWriter("averageData.txt", true, System.Text.Encoding.Default))
+        {
+            streamAv.WriteLine();
+        }
+        using (StreamWriter streamMax = new StreamWriter("maxData.txt", true, System.Text.Encoding.Default))
+        {
+            streamMax.WriteLine();
         }
     }
 }
