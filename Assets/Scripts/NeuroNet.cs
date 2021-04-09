@@ -6,20 +6,10 @@ public class NeuroNet
 {
     public static float mutationPower = 50f;
     public static float mutationProb = 0.2f;
-    public static float weightPower = 1f;
-    public static float byesPower = 1f;
     int countInput, countOutput, countHidenLayer, countHidenNeuron;
     Layer inputLayer;
     Layer[] hidenLayers;
     Layer outputLayer;
-
-    public NeuroNet()
-    {
-        this.countInput = 0;
-        this.countOutput = 0;
-        this.countHidenLayer = 0;
-        this.countHidenNeuron = 0;
-    }
 
     public NeuroNet(int countInput, int countOutput, int countHidenLayer, int countHidenNeuron)
     {
@@ -44,7 +34,6 @@ public class NeuroNet
         this.countHidenLayer = netA.countHidenLayer;
         this.countHidenNeuron = netA.countHidenNeuron;
         inputLayer = new Layer(countInput);
-        inputLayer.Gybrid(netA.inputLayer, netB.inputLayer);
         hidenLayers = new Layer[countHidenLayer];
         hidenLayers[0] = new Layer(countHidenNeuron, inputLayer);
         for (int i = 1; i < countHidenLayer; i++)
@@ -65,22 +54,21 @@ public class NeuroNet
         this.countOutput = netA.countOutput;
         this.countHidenLayer = netA.countHidenLayer;
         this.countHidenNeuron = netA.countHidenNeuron;
-        inputLayer = new Layer(netA.inputLayer, inputLayer);
+        inputLayer = new Layer(countInput);
         hidenLayers = new Layer[countHidenLayer];
-        hidenLayers[0] = new Layer(netA.hidenLayers[0], inputLayer);
-        for (int i = 1; i < countHidenLayer; i++)
+        for (int i = 0; i < countHidenLayer; i++)
         {
-            hidenLayers[i] = new Layer(netA.hidenLayers[i], hidenLayers[i-1]);
+            hidenLayers[i] = new Layer(netA.hidenLayers[i]);
         }
-        outputLayer = new Layer(netA.outputLayer, hidenLayers[countHidenLayer-1]);
+        outputLayer = new Layer(netA.outputLayer);
     }
 
     public float[] GetOutput(float[] inputs)
     {
         inputLayer.Input(inputs);
-        for (int i = 0; i < hidenLayers.Length; i++)
+        foreach (Layer currentLayer in hidenLayers)
         {
-            hidenLayers[i].Calc();
+            currentLayer.Calc();
         }
         outputLayer.Calc();
         return outputLayer.GetValues();
@@ -100,10 +88,10 @@ public class Layer
             neurons[i] = new Neuron();
         }
     }
-    public Layer(Layer layer, Layer prev)
+    public Layer(Layer layer)
     {
         neurons = new Neuron[layer.neurons.Length];
-        prevLayer = prev;
+        prevLayer = layer.prevLayer;
         for (int i = 0; i < neurons.Length; i++)
         {
             neurons[i] = new Neuron(layer.neurons[i]);
@@ -136,10 +124,13 @@ public class Layer
             neurons[i].value = 0;
             for (int j = 0; j < prevLayer.neurons.Length; j++)
             {
-                neurons[i].value += neurons[i].weight[j] * prevLayer.neurons[j].value * NeuroNet.weightPower;
+                neurons[i].value += neurons[i].weight[j] * prevLayer.neurons[j].value;
             }
-            neurons[i].value += neurons[i].byes * NeuroNet.byesPower;
-            neurons[i].Activation();
+            neurons[i].value += neurons[i].byes;
+            if (Mathf.Abs(neurons[i].value) > 1)
+            {
+                neurons[i].Activation();
+            }
         }
     }
 
@@ -148,7 +139,10 @@ public class Layer
         for (int i = 0; i < neurons.Length; i++)
         {
             neurons[i].value = inputs[i];
-            neurons[i].Activation();
+            if (Mathf.Abs(neurons[i].value) > 1)
+            {
+                neurons[i].Activation();
+            }
         }
     }
 
@@ -171,11 +165,11 @@ public class Neuron
     public Neuron(int countWeight)
     {
         value = 0;
-        byes = Random.Range(-1f, 1f);
+        byes = Random.Range(-1f, 1f) * NeuroNet.mutationPower;
         weight = new float[countWeight];
         for (int i = 0; i < countWeight; i++)
         {
-            weight[i] = Random.Range(-1f, 1f);
+            weight[i] = Random.Range(-1f, 1f) * NeuroNet.mutationPower;
         }
     }
 
@@ -183,7 +177,7 @@ public class Neuron
     {
         value = 0;
         byes = Random.Range(-1f, 1f) * NeuroNet.mutationPower;
-        weight = new float[0];
+        weight = null;
     }
 
     public Neuron(Neuron neuron)
@@ -200,7 +194,7 @@ public class Neuron
     public Neuron(Neuron neuronA, Neuron neuronB)
     {
         weight = new float[neuronA.weight.Length];
-        if (Random.value > 0.5)
+        if (Random.Range(0f, 1f) > 0.5)
         {
             byes = neuronA.byes;
         }
@@ -208,13 +202,13 @@ public class Neuron
         {
             byes = neuronB.byes;
         }
-        if (Random.value < NeuroNet.mutationProb)
+        if (Random.Range(0f, 1f) < NeuroNet.mutationProb)
         {
             byes += Random.Range(-1f, 1f) * NeuroNet.mutationPower;
         }
-        for (int i = 0; i < weight.Length; i++)
+        for (int i = 0; i < neuronA.weight.Length; i++)
         {
-            if (Random.value > 0.5)
+            if (Random.Range(0f, 1f) > 0.5)
             {
                 weight[i] = neuronA.weight[i];
             }
@@ -222,7 +216,7 @@ public class Neuron
             {
                 weight[i] = neuronB.weight[i];
             }
-            if (Random.value < NeuroNet.mutationProb)
+            if (Random.Range(0f, 1f) < NeuroNet.mutationProb)
             {
                 weight[i] += Random.Range(-1f, 1f) * NeuroNet.mutationPower;
             }
@@ -231,6 +225,7 @@ public class Neuron
 
     public void Activation()
     {
-        value = Mathf.Atan(value)/Mathf.PI*2;
+        float exp = Mathf.Exp(value/40);
+        value = (exp - 1) / (exp + 1);
     }
 }
