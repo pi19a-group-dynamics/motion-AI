@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/UI/Sources/CursorDefault.aseprite.meta
+guid: b36fb51c4504822458c76a4ed680d710
+DefaultImporter:
+=======
 guid: 4374601514bed8b408e312c7cec8733d
 PrefabImporter:
+>>>>>>> main:Assets/Prefab/Cube.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
