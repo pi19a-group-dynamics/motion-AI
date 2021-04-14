@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.Xml.Serialization;
 
+[System.Serializable]
 public class NeuroNet
 {
     public static float mutationPower = 50f;
@@ -10,6 +13,8 @@ public class NeuroNet
     Layer inputLayer;
     Layer[] hidenLayers;
     Layer outputLayer;
+
+    public NeuroNet() { }
 
     public NeuroNet(int countInput, int countOutput, int countHidenLayer, int countHidenNeuron)
     {
@@ -75,14 +80,18 @@ public class NeuroNet
     }
 }
 
+[System.Serializable]
 public class Layer
 {
     Layer prevLayer;
     Neuron[] neurons;
+
+    public Layer() { }
+
     public Layer(int count)
     {
         neurons = new Neuron[count];
-        prevLayer = this;
+        //prevLayer = this;
         for (int i = 0; i < neurons.Length; i++)
         {
             neurons[i] = new Neuron();
@@ -157,6 +166,7 @@ public class Layer
     }
 }
 
+[System.Serializable]
 public class Neuron
 {
     public float[] weight { get; set; }

@@ -9,7 +9,7 @@ public class Trainee: MonoBehaviour
     public GameObject pullPlane;
     public System.Type type;
     public List<List<GameObject>> branches = new List<List<GameObject>>();
-    List<GameObject> pullWorm = new List<GameObject>();
+    public List<GameObject> pullCreature = new List<GameObject>();
     List<List<float>> averageData = new List<List<float>>();
     List<List<float>> maxData = new List<List<float>>();
     public int countBranch;
@@ -73,7 +73,7 @@ public class Trainee: MonoBehaviour
         for (int i = 0; i < countSpecimen; i++)
         {
             GameObject thisCreature = Instantiate(creature, new Vector3(plane.transform.position.x, 5, -countSpecimen * distansBetweenCreature / 2 + i * distansBetweenCreature), new Quaternion(0, 0, 0, 0));
-            pullWorm.Add(thisCreature);
+            pullCreature.Add(thisCreature);
         }
     }
 
@@ -91,9 +91,9 @@ public class Trainee: MonoBehaviour
                 float score = thisCreature.Score();
                 spawnersSorted.Add((new NeuroNet(thisCreature.net),score));
             }
-            for (int i = 0; i < pullWorm.Count; i++)
+            for (int i = 0; i < pullCreature.Count; i++)
             {
-                ICreature thisCreature = pullWorm[i].GetComponent<ICreature>();
+                ICreature thisCreature = pullCreature[i].GetComponent<ICreature>();
                 float score = thisCreature.Score();
                 spawnersSorted.Add((new NeuroNet(thisCreature.net), score));
             }
@@ -127,10 +127,10 @@ public class Trainee: MonoBehaviour
                 }
             }
         }
-        for (int i = 0; i < pullWorm.Count; i++)
+        for (int i = 0; i < pullCreature.Count; i++)
         {
-            ICreature thisCreature = pullWorm[i].GetComponent<ICreature>();
-            pullWorm[i] = thisCreature.Respawn();
+            ICreature thisCreature = pullCreature[i].GetComponent<ICreature>();
+            pullCreature[i] = thisCreature.Respawn();
             thisCreature.CreateNeuro();
         }
         using (StreamWriter streamAv = new StreamWriter("averageData.txt", true, System.Text.Encoding.Default))
@@ -141,5 +141,10 @@ public class Trainee: MonoBehaviour
         {
             streamMax.WriteLine();
         }
+    }
+
+    public void Save()
+    {
+
     }
 }
