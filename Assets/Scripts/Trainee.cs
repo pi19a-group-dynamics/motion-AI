@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Trainee: MonoBehaviour
 {
+    public SaveInfo info;
+    public Graph GraphAv;
+    public Graph GraphMax;
+
     public GameObject creature;
     public GameObject plane;
     public GameObject pullPlane;
@@ -33,6 +37,8 @@ public class Trainee: MonoBehaviour
         NeuroNet.mutationProb = mutationProb;
         NeuroNet.weightPower = weightPower;
         NeuroNet.byesPower = byesPower;
+
+
         using (StreamWriter streamBr = new StreamWriter("branch.txt", false, System.Text.Encoding.Default))
         {
             streamBr.Write(countBranch);
@@ -55,6 +61,10 @@ public class Trainee: MonoBehaviour
             SpawnPullBranch(countBranch);
         }   
         InvokeRepeating("Respawn", timeToNextGen, timeToNextGen);
+
+        info.Pocolenie.text = (0).ToString();
+        info.CountBranch.text = (countBranch).ToString();
+        info.CountCharacter.text = (countSpecimen).ToString();
     }
 
     public void SpawnBranch(int num)
@@ -84,6 +94,7 @@ public class Trainee: MonoBehaviour
     public void Respawn()
     {
         numGen++;
+        info.Pocolenie.text = numGen.ToString();
         for (int indexBranch = 0; indexBranch < branches.Count; indexBranch++)
         {
             float sumScore = 0;
@@ -116,6 +127,10 @@ public class Trainee: MonoBehaviour
             average = sumScore/countSpecimen;
             averageData[indexBranch].Add(average);
             maxData[indexBranch].Add(spawnersSorted[0].Item2);
+
+            GraphAv.AddDot((int)average);
+            GraphMax.AddDot((int)spawnersSorted[0].Item2);
+
             using (StreamWriter streamAv = new StreamWriter("averageData.txt", true, System.Text.Encoding.Default))
             {
                 streamAv.Write(" " + average);
@@ -194,6 +209,7 @@ public class Trainee: MonoBehaviour
             pullCreature[i] = thisCreature.Respawn();
             thisCreature.CreateNeuro();
         }
+
         using (StreamWriter streamAv = new StreamWriter("averageData.txt", true, System.Text.Encoding.Default))
         {
             streamAv.WriteLine();

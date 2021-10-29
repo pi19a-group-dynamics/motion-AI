@@ -11,7 +11,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{2033A954-58BD-7549-2C3D-6D39EC1FF74E}</ProjectGuid>
+    <ProjectGuid>{BA8752BB-3DCC-FD84-0640-382C26B91645}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -55,16 +55,45 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\CodeMonkey\Assets.cs" />
+     <Compile Include="Assets\CodeMonkey\CMDebug.cs" />
+     <Compile Include="Assets\CodeMonkey\MonoBehaviours\CameraFollow.cs" />
+     <Compile Include="Assets\CodeMonkey\MonoBehaviours\CameraFollowSetup.cs" />
+     <Compile Include="Assets\CodeMonkey\MonoBehaviours\ComponentActions.cs" />
+     <Compile Include="Assets\CodeMonkey\MonoBehaviours\PositionRendererSorter.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\Button_Sprite.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\Button_UI.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\FunctionPeriodic.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\FunctionTimer.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\FunctionUpdater.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\UI_Bar.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\UI_BarMultiple.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\UI_Sprite.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\UI_TextComplex.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\UtilsClass.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\World_Bar.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\World_Mesh.cs" />
+     <Compile Include="Assets\CodeMonkey\Utils\World_Sprite.cs" />
      <Compile Include="Assets\Scripts\ICreature.cs" />
-     <Compile Include="Assets\Scripts\Layer.cs" />
      <Compile Include="Assets\Scripts\MoveCamera.cs" />
      <Compile Include="Assets\Scripts\NeuroNet.cs" />
-     <Compile Include="Assets\Scripts\Neuron.cs" />
      <Compile Include="Assets\Scripts\Rubik.cs" />
      <Compile Include="Assets\Scripts\Spider.cs" />
-     <Compile Include="Assets\Scripts\Test.cs" />
      <Compile Include="Assets\Scripts\Trainee.cs" />
      <Compile Include="Assets\Scripts\Worm.cs" />
+     <Compile Include="Assets\UI\Script\ButtonEvents.cs" />
+     <Compile Include="Assets\UI\Script\Data.cs" />
+     <Compile Include="Assets\UI\Script\Graph.cs" />
+     <Compile Include="Assets\UI\Script\IO.cs" />
+     <Compile Include="Assets\UI\Script\SaveInfo.cs" />
+     <Compile Include="Assets\UI\Script\ShapeMovement.cs" />
+     <Compile Include="Assets\UI\Script\ShapeSizeControlle.cs" />
+     <Compile Include="Assets\Windows System\Panel.cs" />
+     <Compile Include="Assets\Windows System\Resizer.cs" />
+     <Compile Include="Assets\Windows System\TestCliker.cs" />
+     <Compile Include="Assets\Windows System\Window.cs" />
+     <Compile Include="Assets\Windows System\WindowsSystem.cs" />
+     <None Include="Assets\CodeMonkey\README.txt" />
  <Reference Include="UnityEngine">
  <HintPath>B:/Programs/2019.4.21f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
@@ -594,31 +623,31 @@
  <HintPath>B:/Programs/2019.4.21f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Timeline.Editor">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.VSCode.Editor">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Timeline">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
  </Reference>
  <Reference Include="Unity.CollabProxy.Editor">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Rider.Editor">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.UI">
- <HintPath>B:/Projects/motion-AI231/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ <HintPath>C:/Users/yukkop/motion-AI/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
